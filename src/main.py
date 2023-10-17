@@ -1,7 +1,6 @@
 from lancamentoNf import lancarNf
 from emissaoNf import emitirNf
 
-import time
 import json
 import datetime
 
@@ -28,15 +27,12 @@ for pj in sensitive_data:
     informacoes = pj[nome]
 
     logging.info(f'Iniciando emissao da nota de {nome}')
-    emitirNf(informacoes, dataAtual, mes, ano)
+    numeroNf = emitirNf(informacoes, dataAtual, mes, ano)
     logging.info(f'Finalizando emissao da nota de {nome}')
-    
+
     logging.info(f'Iniciando lancamento de {nome}')
-    lancarNf(informacoes, dataAtual)
+    lancarNf(informacoes, dataAtual, numeroNf)
     logging.info(f'Finalizando lancamento de {nome}')
 
-
+ 
 logging.info(f'Fim da automacao')
-
-time.sleep(100)
-

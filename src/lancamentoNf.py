@@ -1,4 +1,5 @@
 from selenium import webdriver
+from pywinauto import Desktop
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
@@ -7,6 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 import time
 import json
+import pyautogui
 
 with open("../config/config.json", "r", encoding="utf-8") as file:
     sensitive_data = json.load(file)
@@ -15,7 +17,7 @@ with open("../config/config.json", "r", encoding="utf-8") as file:
 login = acessoZeev["login"]
 senha = acessoZeev["senha"]
 
-def lancarNf(infoPj, dataAtual):
+def lancarNf(infoPj, dataAtual, numeroNf):
     # definicao de variaveis
     cnpj = infoPj["cnpj"]
     razaoSocial = infoPj["razaoSocial"]
@@ -96,19 +98,40 @@ def lancarNf(infoPj, dataAtual):
     time.sleep(1)
 
     driver.execute_script("document.getElementById('inpnfsDePj-1').checked = true")
+    driver.execute_script("window.scrollBy(0, 500);")
+    time.sleep(1)
+
+    driver.find_element(By.ID, 'btnUploadnotaFiscal').click()
+    wait.until(EC.presence_of_element_located((By.TAG_NAME, 'iframe')))
+
+    time.sleep(2)
+    pyautogui.click(661,420)
+    time.sleep(5)
+
+    pyautogui.click(86,178)
+    time.sleep(1)
+    pyautogui.click(300,171)
+    time.sleep(1)
+    pyautogui.click(790,507)
+    time.sleep(3)
+
+    pyautogui.click(1184,606)
+    time.sleep(.5)
+    pyautogui.click(1106,596)
+    time.sleep(5)
 
     form_emissao = driver.find_element(By.ID, 'inpdataDeEmissao')
     form_emissao.send_keys(dataAtual)
 
     form_valor = driver.find_element(By.ID, 'inpvalorDaNotaFiscal')
-    form_valor.send_keys(valorNotaFiscal)
+    form_valor.send_keys(float(valorNotaFiscal) / 10)
 
     form_cnpj = driver.find_element(By.ID, 'inppesquisaDeFornecedor')
     form_cnpj.send_keys(cnpj)
 
     driver.execute_script(f'document.getElementById("inprazaoSocialDoEmitente").value = "{razaoSocial}"')
 
-    driver.execute_script(f'document.getElementById("inpnumeroDaNf").value = "12"') # atencao aqui
+    driver.execute_script(f'document.getElementById("inpnumeroDaNf").value = "{numeroNf}"')
 
     driver.execute_script(f'document.getElementById("inpverificacaoDeDuplicidade").value = "Validação OK - Nota ainda não lançada"')
 
@@ -122,10 +145,10 @@ def lancarNf(infoPj, dataAtual):
     driver.execute_script(f'document.getElementById("inppedidosOk").value = "ok"')
 
     form_dataPagamento = driver.find_element(By.ID, 'inpvencimentoDaParcela')
-    form_dataPagamento.send_keys('12/11/2023') # atencao aqui
+    form_dataPagamento.send_keys('07/11/2023') # atencao aqui
 
     form_valorParcela = driver.find_element(By.ID, 'inpvalorDaParcela')
-    form_valorParcela.send_keys(valorNotaFiscal)
+    form_valorParcela.send_keys(float(valorNotaFiscal) / 10)
 
     form_formaPagamento = driver.find_element(By.ID, 'inpformaDePagamento')
     select = Select(form_formaPagamento)
@@ -144,7 +167,16 @@ def lancarNf(infoPj, dataAtual):
     form_formaPagamento = driver.find_element(By.ID, 'inptipoDeConta')
     select = Select(form_formaPagamento)
     select.select_by_value(tipoDeConta)
-    time.sleep(2)
 
+    funcao = driver.execute_script('return document.querySelector("#controllers select")')
+    if funcao:
+        select = Select(funcao)
+        select.select_by_index(1)
+
+    time.sleep(30)
+
+    btnConcluir = driver.find_element(By.ID, 'BtnSend')
+    btnConcluir.click()
+    time.sleep(15)
     driver.quit()
     time.sleep(2)

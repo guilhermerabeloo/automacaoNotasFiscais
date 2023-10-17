@@ -13,6 +13,7 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     senhaNFse = informacoes["senhaNFse"]
     cnpjTomador = informacoes["cnpjTomador"]
     buscaTributoNacional = informacoes["buscaTributoNacional"]
+    buscaTributoMunicipal = informacoes["buscaTributoMunicipal"]
     coordenadaTributoMunicipal = informacoes["coordenadaTributoMunicipal"]
     valorNotaFiscal = informacoes["valorNotaFiscal"]
     descricaoServico = informacoes["descricaoServico"]
@@ -40,9 +41,15 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     driver.find_element(by='css selector', value='button.btn-primary').click()
     time.sleep(1)
 
-    # Emissao da nota - Etapa 1
-    btnNovaNf = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'btnAcesso')))
+    # Obtendo numero da ultima nota
+    driver.execute_script("document.querySelector('table.table-striped tbody tr .td-opcoes a').click()")
+
+    btnNovaNf = wait.until(EC.presence_of_element_located((By.ID, 'btnNovaNFSe')))
+    numeroNota = int(driver.execute_script("return document.querySelectorAll('.form-group span.form-control-static')[3].innerText")) + 1
+
+    print(numeroNota)
     btnNovaNf.click()
+    # Emissao da nota - Etapa 1
 
     competencia = wait.until(EC.presence_of_element_located((By.ID, 'DataCompetencia')))
     competencia.send_keys(dataAtual)
@@ -63,34 +70,40 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     time.sleep(2)
 
     # Emissao da nota - Etapa 2
-    pyautogui.click(898,459)
+    pyautogui.click(898,459) # campo Municipio
     time.sleep(1)
     pyautogui.write('Fortaleza')
     time.sleep(1)
-    pyautogui.click(747,702)
+    pyautogui.click(747,702) # selecionando o municipio
     time.sleep(1)
-    pyautogui.click(194,639)
+    pyautogui.click(194,639) # campo codigo do tributo nacional
     time.sleep(1)
     pyautogui.write(buscaTributoNacional)
     time.sleep(1)
-    pyautogui.click(257,604)
+    pyautogui.click(257,604) # selecionando o tributo nacional
 
     driver.execute_script("document.getElementById('ServicoPrestado_HaExportacaoImunidadeNaoIncidencia').checked = true")
     driver.execute_script("document.getElementById('pnlMunIncid').style.display = ''")
     driver.execute_script("window.scrollBy(0, 500);")
 
     time.sleep(1)
-    pyautogui.click(258,442)
+    pyautogui.click(258,442) # campo código do tributo municipal
     time.sleep(1)
-    # pyautogui.click(358,569)
-    pyautogui.click(coordenadaTributoMunicipal[0],coordenadaTributoMunicipal[1])
-    time.sleep(1)
+    if buscaTributoMunicipal == "": # caso o tipo de tributo nacional abra várias opções de tributo municipal, sendo necessária de uma busca
+        pyautogui.click(coordenadaTributoMunicipal[0],coordenadaTributoMunicipal[1])
+    else: 
+        pyautogui.write(buscaTributoMunicipal)
+        time.sleep(1)
+        pyautogui.click(456,533)
 
+    time.sleep(1)
     driver.find_element(by='id', value='ServicoPrestado_Descricao').send_keys(f'{descricaoServico} {mes}/{ano}')
     time.sleep(1)
     driver.find_element(by='css selector', value='button.btn-primary').click()
 
     # Emissao da nota - Etapa 3
+    print('etapa 3')
+
     campoValor = wait.until(EC.presence_of_element_located((By.ID, 'Valores_ValorServico')))
     campoValor.send_keys(valorNotaFiscal)
     campoValor.send_keys(Keys.TAB)
@@ -100,7 +113,19 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     driver.find_element(by='css selector', value='button.btn-primary').click()
 
     # Emissão da nota - Etapa 4
+    print('etapa 4')
+    time.sleep(30)
+    btnEmitir = wait.until(EC.presence_of_element_located((By.ID, 'btnProsseguir')))
+    btnEmitir.click()
+
+    # Download da nota
+    print('Download')
+
+    btnDownload = wait.until(EC.presence_of_element_located((By.ID, 'btnDownloadDANFSE')))
+    btnDownload.click()
+    time.sleep(20)
 
     time.sleep(3)
     driver.quit()
     time.sleep(3)
+    return numeroNota
