@@ -1,5 +1,4 @@
 from selenium import webdriver
-from pywinauto import Desktop
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
@@ -105,7 +104,7 @@ def lancarNf(infoPj, dataAtual, numeroNf):
     wait.until(EC.presence_of_element_located((By.TAG_NAME, 'iframe')))
 
     time.sleep(2)
-    pyautogui.click(661,420)
+    pyautogui.click(661,460)
     time.sleep(5)
 
     pyautogui.click(86,178)
@@ -115,9 +114,9 @@ def lancarNf(infoPj, dataAtual, numeroNf):
     pyautogui.click(790,507)
     time.sleep(3)
 
-    pyautogui.click(1184,606)
-    time.sleep(.5)
-    pyautogui.click(1106,596)
+    # pyautogui.click(1184,606)
+    # time.sleep(.5)
+    pyautogui.click(1555,748)
     time.sleep(5)
 
     form_emissao = driver.find_element(By.ID, 'inpdataDeEmissao')
@@ -145,7 +144,7 @@ def lancarNf(infoPj, dataAtual, numeroNf):
     driver.execute_script(f'document.getElementById("inppedidosOk").value = "ok"')
 
     form_dataPagamento = driver.find_element(By.ID, 'inpvencimentoDaParcela')
-    form_dataPagamento.send_keys('07/11/2023') # atencao aqui
+    form_dataPagamento.send_keys('05/12/2023') # atencao aqui
 
     form_valorParcela = driver.find_element(By.ID, 'inpvalorDaParcela')
     form_valorParcela.send_keys(float(valorNotaFiscal) / 10)

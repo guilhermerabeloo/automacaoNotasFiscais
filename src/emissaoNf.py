@@ -47,9 +47,9 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     btnNovaNf = wait.until(EC.presence_of_element_located((By.ID, 'btnNovaNFSe')))
     numeroNota = int(driver.execute_script("return document.querySelectorAll('.form-group span.form-control-static')[3].innerText")) + 1
 
-    print(numeroNota)
     btnNovaNf.click()
     # Emissao da nota - Etapa 1
+    print('etapa 1 - Informações do tomador')
 
     competencia = wait.until(EC.presence_of_element_located((By.ID, 'DataCompetencia')))
     competencia.send_keys(dataAtual)
@@ -70,17 +70,20 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     time.sleep(2)
 
     # Emissao da nota - Etapa 2
+    print('etapa 2 - Informações do serviço')
+
     pyautogui.click(898,459) # campo Municipio
     time.sleep(1)
     pyautogui.write('Fortaleza')
     time.sleep(1)
-    pyautogui.click(747,702) # selecionando o municipio
+    pyautogui.click(898,701) # selecionando o municipio
     time.sleep(1)
     pyautogui.click(194,639) # campo codigo do tributo nacional
     time.sleep(1)
     pyautogui.write(buscaTributoNacional)
     time.sleep(1)
-    pyautogui.click(257,604) # selecionando o tributo nacional
+    pyautogui.click(194,730) # selecionando o tributo nacional
+    time.sleep(1)
 
     driver.execute_script("document.getElementById('ServicoPrestado_HaExportacaoImunidadeNaoIncidencia').checked = true")
     driver.execute_script("document.getElementById('pnlMunIncid').style.display = ''")
@@ -102,7 +105,7 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     driver.find_element(by='css selector', value='button.btn-primary').click()
 
     # Emissao da nota - Etapa 3
-    print('etapa 3')
+    print('etapa 3 - Valores')
 
     campoValor = wait.until(EC.presence_of_element_located((By.ID, 'Valores_ValorServico')))
     campoValor.send_keys(valorNotaFiscal)
@@ -113,17 +116,16 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     driver.find_element(by='css selector', value='button.btn-primary').click()
 
     # Emissão da nota - Etapa 4
-    print('etapa 4')
+    print('etapa 4 - Conferência e emissão')
     time.sleep(30)
     btnEmitir = wait.until(EC.presence_of_element_located((By.ID, 'btnProsseguir')))
     btnEmitir.click()
 
     # Download da nota
-    print('Download')
 
     btnDownload = wait.until(EC.presence_of_element_located((By.ID, 'btnDownloadDANFSE')))
     btnDownload.click()
-    time.sleep(20)
+    print('Download realizado')
 
     time.sleep(3)
     driver.quit()
