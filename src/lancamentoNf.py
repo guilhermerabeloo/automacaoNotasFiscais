@@ -1,4 +1,5 @@
 from selenium import webdriver
+from pywinauto.application import Application
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
@@ -60,7 +61,7 @@ def lancarNf(infoPj, dataAtual, numeroNf):
     pessoaPersonificada = driver.execute_script('return arguments[0].shadowRoot.querySelector("tr.select-user")', elementoShadowDOM)
     pessoaPersonificada.click()
     time.sleep(1)
-    driver.get('https://fornecedora.zeev.it/2.0/request?c=8VTuGOamI%2B81yJLC5J%2Bw45MFU%2B%2FYJpiOIyKUMJStE0ezH4FfVONPE5fqfWFyR554NOQMPtok1fqhoLPrLKLVuA%3D%3D')    
+    driver.get('https://fornecedora.zeev.it/2.0/request?c=%2BfNoYh44G5jE5xy8Wkn6jd3D%2BKdqh2rEE4ZN4Rk1HXQJFtVGr6nxd3yFR3Vnqqz7k00drhB3Gg7qm1Guji%2B55g%3D%3D')    
 
 
     # Preenchendo formulário
@@ -81,41 +82,43 @@ def lancarNf(infoPj, dataAtual, numeroNf):
     select = Select(form_departamento)
     select.select_by_value('18')
 
-    driver.execute_script("document.getElementById('inpcontaGerencial').value = '21028 - GASTOS COM PJ FIXO'")
+    pyautogui.press('TAB')
+    time.sleep(.01)
+    pyautogui.press('SPACE')
+    time.sleep(.01)
 
-    form_estoque = driver.find_element(By.ID, 'inpestoque')
-    select = Select(form_estoque)
-    select.select_by_value('24')
-
-    form_urgencia = driver.find_element(By.ID, 'inpurgencia')
-    select = Select(form_urgencia)
-    select.select_by_value('1 - Normal')
-
-    form_tipo = driver.find_element(By.ID, 'inptipo')
-    select = Select(form_tipo)
-    select.select_by_value('Servico')
-    time.sleep(1)
-
-    driver.execute_script("document.getElementById('inpnfsDePj-1').checked = true")
-    driver.execute_script("window.scrollBy(0, 500);")
+    for _ in range(8):
+        pyautogui.press('TAB')
+        time.sleep(.01)
     time.sleep(1)
 
     driver.find_element(By.ID, 'btnUploadnotaFiscal').click()
     wait.until(EC.presence_of_element_located((By.TAG_NAME, 'iframe')))
 
-    time.sleep(2)
-    pyautogui.click(661,460)
     time.sleep(5)
+    pyautogui.click(661,460)
+    time.sleep(7)
 
-    pyautogui.click(86,178)
-    time.sleep(1)
-    pyautogui.click(300,171)
-    time.sleep(1)
-    pyautogui.click(790,507)
-    time.sleep(3)
+    explorer = Application(backend="win32").connect(title="Abrir")
+    time.sleep(2)
+    pastaRaiz = False
+    while pastaRaiz==False: # Produrando a pasta Desktop
+        explorer.Abrir.child_window(title="Barra de ferramentas da faixa superior", class_name="ToolbarWindow32").wrapper_object().click_input()
+        pastaRaiz = explorer.Abrir.child_window(title="Endereço: Área de Trabalho", class_name="ToolbarWindow32").exists()
 
-    # pyautogui.click(1184,606)
-    # time.sleep(.5)
+    explorer.Abrir.child_window(title="Endereço: Área de Trabalho", class_name="ToolbarWindow32").wrapper_object().click_input()
+    pyautogui.write(f'C:\\Users\\guilherme.rabelo\\Downloads')
+    pyautogui.press('ENTER')
+
+    time.sleep(2)
+    for _ in range(4):
+        pyautogui.press('TAB')
+        time.sleep(.01)
+    pyautogui.press('SPACE')
+    time.sleep(.01)
+    pyautogui.press('ENTER')
+
+    time.sleep(5)
     pyautogui.click(1555,748)
     time.sleep(5)
 
@@ -136,15 +139,16 @@ def lancarNf(infoPj, dataAtual, numeroNf):
 
     driver.execute_script(f'document.getElementById("inpnumeroOk").value = "ok"')
 
+    driver.execute_script(f'document.getElementById("inpparcelasOk").value = "ok"')
+
+    driver.execute_script(f'document.getElementById("inpcodUnidade").value = "13"')
+
     form_pedido = driver.find_element(By.ID, 'inppedido')
     form_pedido.send_keys(pedido)
 
     driver.execute_script(f'document.getElementById("inpvalidacaoDoPedido").value = "ok"')
 
     driver.execute_script(f'document.getElementById("inppedidosOk").value = "ok"')
-
-    form_dataPagamento = driver.find_element(By.ID, 'inpvencimentoDaParcela')
-    form_dataPagamento.send_keys('05/12/2023') # atencao aqui
 
     form_valorParcela = driver.find_element(By.ID, 'inpvalorDaParcela')
     form_valorParcela.send_keys(float(valorNotaFiscal) / 10)

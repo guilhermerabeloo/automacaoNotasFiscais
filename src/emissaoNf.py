@@ -94,6 +94,7 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     time.sleep(1)
     if buscaTributoMunicipal == "": # caso o tipo de tributo nacional abra várias opções de tributo municipal, sendo necessária de uma busca
         pyautogui.click(coordenadaTributoMunicipal[0],coordenadaTributoMunicipal[1])
+        time.sleep(1)
     else: 
         pyautogui.write(buscaTributoMunicipal)
         time.sleep(1)
