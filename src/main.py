@@ -1,8 +1,9 @@
 from lancamentoNf import lancarNf
 from emissaoNf import emitirNf
-
+from sendEmail import envioDoEmail
 import json
 import datetime
+import time
 
 import logging
 
@@ -22,6 +23,11 @@ with open("../config/secrets.json", "r", encoding="utf-8") as file:
     sensitive_data = json.load(file)
     sensitive_data = sensitive_data["pjs"]
 
+with open("../config/calendarioPagamento.json", "r", encoding="utf-8") as file:
+    calendario = json.load(file)
+    mesFormatado = f'{int(mes)}'
+    dataPagamento = calendario[mesFormatado]
+
 for pj in sensitive_data:
     nome = list(pj.keys())[0]
     informacoes = pj[nome]
@@ -34,5 +40,7 @@ for pj in sensitive_data:
     lancarNf(informacoes, dataAtual, numeroNf)
     logging.info(f'Finalizando lancamento de {nome}')
 
- 
+    envioDoEmail(informacoes['email'], nome, numeroNf, informacoes['valorNotaFiscal'], dataAtual, dataPagamento)
+
+    time.sleep(5)
 logging.info(f'Fim da automacao')

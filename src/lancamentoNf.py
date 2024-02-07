@@ -158,14 +158,14 @@ def lancarNf(infoPj, dataAtual, numeroNf):
     select.select_by_value(formaPagamento)
     time.sleep(1)
 
-    form_valorParcela = driver.find_element(By.ID, 'inpinstituicaoBancaria')
-    form_valorParcela.send_keys(banco)
+    form_banco = driver.find_element(By.ID, 'inpinstituicaoBancaria')
+    form_banco.send_keys(banco)
 
-    form_valorParcela = driver.find_element(By.ID, 'inpagencia')
-    form_valorParcela.send_keys(agencia)
+    form_agencia = driver.find_element(By.ID, 'inpagencia')
+    form_agencia.send_keys(agencia)
 
-    form_valorParcela = driver.find_element(By.ID, 'inpcontaBancaria')
-    form_valorParcela.send_keys(conta)
+    form_conta = driver.find_element(By.ID, 'inpcontaBancaria')
+    form_conta.send_keys(conta)
 
     form_formaPagamento = driver.find_element(By.ID, 'inptipoDeConta')
     select = Select(form_formaPagamento)
