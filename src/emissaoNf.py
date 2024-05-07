@@ -3,6 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from util import clicarEmImagem  
 
 import time
 import pyautogui
@@ -14,7 +15,6 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     cnpjTomador = informacoes["cnpjTomador"]
     buscaTributoNacional = informacoes["buscaTributoNacional"]
     buscaTributoMunicipal = informacoes["buscaTributoMunicipal"]
-    coordenadaTributoMunicipal = informacoes["coordenadaTributoMunicipal"]
     valorNotaFiscal = informacoes["valorNotaFiscal"]
     descricaoServico = informacoes["descricaoServico"]
 
@@ -71,34 +71,36 @@ def emitirNf(informacoes, dataAtual, mes, ano):
 
     # Emissao da nota - Etapa 2
     print('etapa 2 - Informações do serviço')
-
-    pyautogui.click(898,459) # campo Municipio
+    clicarEmImagem('C:\\Users\\guilherme.rabelo\\Documents\\Lançamento de notas fiscais PJ\\assets\\btn_selectMunicipio.png')
     time.sleep(1)
     pyautogui.write('Fortaleza')
     time.sleep(1)
-    pyautogui.click(898,701) # selecionando o municipio
+    for _ in range(4):
+        pyautogui.press('down')
+        time.sleep(.5)
+    pyautogui.press('enter')
     time.sleep(1)
-    pyautogui.click(194,639) # campo codigo do tributo nacional
+
+    pyautogui.press('TAB')
+    pyautogui.press('enter')
     time.sleep(1)
     pyautogui.write(buscaTributoNacional)
     time.sleep(1)
-    pyautogui.click(194,730) # selecionando o tributo nacional
+    pyautogui.press('enter')
     time.sleep(1)
 
     driver.execute_script("document.getElementById('ServicoPrestado_HaExportacaoImunidadeNaoIncidencia').checked = true")
     driver.execute_script("document.getElementById('pnlMunIncid').style.display = ''")
     driver.execute_script("window.scrollBy(0, 500);")
 
+    for _ in range(4):
+        pyautogui.press('TAB')
+        time.sleep(.5)
+    pyautogui.press('enter')
     time.sleep(1)
-    pyautogui.click(258,442) # campo código do tributo municipal
+    pyautogui.write(buscaTributoMunicipal)
     time.sleep(1)
-    if buscaTributoMunicipal == "": # caso o tipo de tributo nacional abra várias opções de tributo municipal, sendo necessária de uma busca
-        pyautogui.click(coordenadaTributoMunicipal[0],coordenadaTributoMunicipal[1])
-        time.sleep(1)
-    else: 
-        pyautogui.write(buscaTributoMunicipal)
-        time.sleep(1)
-        pyautogui.click(456,533)
+    pyautogui.press('enter')
 
     time.sleep(1)
     driver.find_element(by='id', value='ServicoPrestado_Descricao').send_keys(f'{descricaoServico} {mes}/{ano}')
