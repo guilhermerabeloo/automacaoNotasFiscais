@@ -45,7 +45,7 @@ def lancarNf(infoPj, dataAtual, numeroNf):
     wait = WebDriverWait(driver, 20)
     iframeLogin = wait.until(EC.presence_of_element_located((By.ID, 'ifrContent')))
     driver.switch_to.frame(iframeLogin)
-
+    time.sleep(5)
     driver.find_element(by='id', value='login').send_keys(login)
     driver.find_element(by='id', value='password').send_keys(senha)
     driver.find_element(by='id', value='btnLogin').click()
@@ -92,35 +92,52 @@ def lancarNf(infoPj, dataAtual, numeroNf):
         time.sleep(.01)
     time.sleep(1)
 
-    driver.find_element(By.ID, 'btnUploadnotaFiscal').click()
-    wait.until(EC.presence_of_element_located((By.TAG_NAME, 'iframe')))
+    driver.find_element(By.ID, 'btnUploadnotaFiscal').click() 
+    wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'modal-iframe')))
+    time.sleep(2)
+    
+    iframeModal = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'modal-iframe')))
+    driver.switch_to.frame(iframeModal)
+    time.sleep(1)
 
-    time.sleep(5)
-    pyautogui.click(661,460)
-    time.sleep(7)
+    driver.find_element(By.CSS_SELECTOR, 'h4.modal-title').click()
+    time.sleep(1)
 
-    explorer = Application(backend="win32").connect(title="Abrir")
+    pyautogui.press('TAB')
+    time.sleep(1)
+    pyautogui.press('SPACE')
+
+    explorer = Application(backend="win32").connect(title="Abrir", found_index=0, timeout=10)
     time.sleep(2)
     pastaRaiz = False
     while pastaRaiz==False: # Produrando a pasta Desktop
-        explorer.Abrir.child_window(title="Barra de ferramentas da faixa superior", class_name="ToolbarWindow32").wrapper_object().click_input()
+        explorer.Abrir.children()[34].click_input() # botao voltar uma pasta
+        time.sleep(1)
         pastaRaiz = explorer.Abrir.child_window(title="Endereço: Área de Trabalho", class_name="ToolbarWindow32").exists()
 
     explorer.Abrir.child_window(title="Endereço: Área de Trabalho", class_name="ToolbarWindow32").wrapper_object().click_input()
+    time.sleep(1)
     pyautogui.write(f'C:\\Users\\guilherme.rabelo\\Downloads')
+    time.sleep(1)
     pyautogui.press('ENTER')
+    time.sleep(1)
 
-    time.sleep(2)
     for _ in range(4):
         pyautogui.press('TAB')
-        time.sleep(.01)
+        time.sleep(1)
     pyautogui.press('SPACE')
-    time.sleep(.01)
+    time.sleep(1)
     pyautogui.press('ENTER')
 
     time.sleep(5)
-    pyautogui.click(1555,748)
+    for _ in range(4):
+        pyautogui.press('TAB')
+        time.sleep(.2)
+
+    pyautogui.press('SPACE')
+
     time.sleep(5)
+    driver.switch_to.default_content()
 
     form_emissao = driver.find_element(By.ID, 'inpdataDeEmissao')
     form_emissao.send_keys(dataAtual)

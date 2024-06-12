@@ -15,6 +15,7 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     cnpjTomador = informacoes["cnpjTomador"]
     buscaTributoNacional = informacoes["buscaTributoNacional"]
     buscaTributoMunicipal = informacoes["buscaTributoMunicipal"]
+    coordenadaTributoMunicipal = informacoes["coordenadaTributoMunicipal"]
     valorNotaFiscal = informacoes["valorNotaFiscal"]
     descricaoServico = informacoes["descricaoServico"]
 
@@ -41,8 +42,10 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     driver.find_element(by='css selector', value='button.btn-primary').click()
     time.sleep(1)
 
-    # Obtendo numero da ultima nota
-    driver.execute_script("document.querySelector('table.table-striped tbody tr .td-opcoes a').click()")
+    ## Obtendo numero da ultima nota
+    driver.execute_script("""const quantidadeTabelas = document.querySelectorAll('table.table-striped').length
+                             document.querySelectorAll('table.table-striped')[quantidadeTabelas-1].querySelector('tbody tr .td-opcoes a').click()
+                        """)
 
     btnNovaNf = wait.until(EC.presence_of_element_located((By.ID, 'btnNovaNFSe')))
     numeroNota = int(driver.execute_script("return document.querySelectorAll('.form-group span.form-control-static')[3].innerText")) + 1
@@ -67,11 +70,11 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     tomador.send_keys(Keys.TAB)
     time.sleep(1)
     driver.find_element(by='id', value='btnAvancar').click()
-    time.sleep(2)
+    time.sleep(3)
 
     # Emissao da nota - Etapa 2
     print('etapa 2 - Informações do serviço')
-    clicarEmImagem('C:\\Users\\guilherme.rabelo\\Documents\\Lançamento de notas fiscais PJ\\assets\\btn_selectMunicipio.png')
+    clicarEmImagem('C:\\Users\\guilherme.rabelo\\Documents\\RPA_Python\\RPA_LancamentoNotasPJ\\assets\\btn_selectMunicipio.png', 1)
     time.sleep(1)
     pyautogui.write('Fortaleza')
     time.sleep(1)
@@ -83,7 +86,7 @@ def emitirNf(informacoes, dataAtual, mes, ano):
 
     pyautogui.press('TAB')
     pyautogui.press('enter')
-    time.sleep(1)
+    time.sleep(10)
     pyautogui.write(buscaTributoNacional)
     time.sleep(1)
     pyautogui.press('enter')
@@ -96,16 +99,27 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     for _ in range(4):
         pyautogui.press('TAB')
         time.sleep(.5)
-    pyautogui.press('enter')
     time.sleep(1)
-    pyautogui.write(buscaTributoMunicipal)
+
+    if buscaTributoMunicipal=='print': 
+        btnSelecionaCodigo = "C:\\Users\\guilherme.rabelo\\Documents\\RPA_Python\\RPA_LancamentoNotasPJ\\assets\\btn_selectCodigoMunicipio.png"
+        clicarEmImagem(btnSelecionaCodigo,0)
+        time.sleep(1)
+
+        clicarEmImagem(coordenadaTributoMunicipal,0)
+    else:
+        pyautogui.press('enter')
+        pyautogui.write(buscaTributoMunicipal)
+
     time.sleep(1)
     pyautogui.press('enter')
 
-    time.sleep(1)
-    driver.find_element(by='id', value='ServicoPrestado_Descricao').send_keys(f'{descricaoServico} {mes}/{ano}')
+    time.sleep(5)
+    driver.execute_script(f"document.getElementById('ServicoPrestado_Descricao').value = '{descricaoServico} {mes}/{ano}'")
     time.sleep(1)
     driver.find_element(by='css selector', value='button.btn-primary').click()
+
+    time.sleep(1)
 
     # Emissao da nota - Etapa 3
     print('etapa 3 - Valores')
@@ -118,6 +132,7 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     driver.execute_script("document.querySelectorAll('#ValorTributos_TipoValorTributos')[2].checked = true")
     driver.find_element(by='css selector', value='button.btn-primary').click()
 
+    time.sleep(10)
     # Emissão da nota - Etapa 4
     print('etapa 4 - Conferência e emissão')
     time.sleep(30)
