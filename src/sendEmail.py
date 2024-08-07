@@ -1,15 +1,7 @@
 import win32com.client as win32
-import os
 
-def envioDoEmail(enderecoEmail, nome, numeroDaNota, valorNota, emissaoNota, dataPagamento):
-    pasta = 'C:\\Users\\guilherme.rabelo\\Downloads'
-
-    arquivos = os.listdir(pasta)
-    arquivos = [arquivo for arquivo in arquivos if os.path.isfile(os.path.join(pasta, arquivo))]
-    ultimo_arquivo = max(arquivos, key=lambda arquivo: os.path.getmtime(os.path.join(pasta, arquivo)))
-    caminhoNotaFiscal = f'{pasta}\\{ultimo_arquivo}'
-
-    html_file_path = os.path.join(os.path.dirname(__file__), '../assets', 'confirmacaoLancamento.html')
+def envioDoEmail(enderecoEmail, nome, numeroDaNota, valorNota, emissaoNota, dataPagamento, caminhoNotaFiscal):
+    html_file_path = 'C:\\Users\\guilherme.rabelo\\Documents\\RPA_Python\\RPA_LancamentoNotasPJ\\assets\\confirmacaoLancamento.html'
 
     outlook = win32.Dispatch('outlook.application')
     email = outlook.CreateItem(0)

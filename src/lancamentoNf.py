@@ -5,19 +5,18 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions as EC
-
 import time
 import json
 import pyautogui
 
-with open("../config/config.json", "r", encoding="utf-8") as file:
+with open("./config/config.json", "r", encoding="utf-8") as file:
     sensitive_data = json.load(file)
     acessoZeev = sensitive_data["acessoZeev"]
 
 login = acessoZeev["login"]
 senha = acessoZeev["senha"]
 
-def lancarNf(infoPj, dataAtual, numeroNf):
+def lancarNf(infoPj, dataAtual, numeroNf, caminhoNotaFiscal):
     # definicao de variaveis
     cnpj = infoPj["cnpj"]
     razaoSocial = infoPj["razaoSocial"]
@@ -107,17 +106,10 @@ def lancarNf(infoPj, dataAtual, numeroNf):
     time.sleep(1)
     pyautogui.press('SPACE')
 
-    explorer = Application(backend="win32").connect(title="Abrir", found_index=0, timeout=10)
+    Application(backend="win32").connect(title="Abrir", found_index=0, timeout=10)
     time.sleep(2)
-    pastaRaiz = False
-    while pastaRaiz==False: # Produrando a pasta Desktop
-        explorer.Abrir.children()[34].click_input() # botao voltar uma pasta
-        time.sleep(1)
-        pastaRaiz = explorer.Abrir.child_window(title="Endereço: Área de Trabalho", class_name="ToolbarWindow32").exists()
 
-    explorer.Abrir.child_window(title="Endereço: Área de Trabalho", class_name="ToolbarWindow32").wrapper_object().click_input()
-    time.sleep(1)
-    pyautogui.write(f'C:\\Users\\guilherme.rabelo\\Downloads')
+    pyautogui.write(caminhoNotaFiscal)
     time.sleep(1)
     pyautogui.press('ENTER')
     time.sleep(1)
@@ -193,7 +185,7 @@ def lancarNf(infoPj, dataAtual, numeroNf):
         select = Select(funcao)
         select.select_by_index(1)
 
-    time.sleep(30)
+    time.sleep(10)
 
     btnConcluir = driver.find_element(By.ID, 'BtnSend')
     btnConcluir.click()

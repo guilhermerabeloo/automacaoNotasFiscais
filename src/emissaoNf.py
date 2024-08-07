@@ -3,7 +3,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from util import clicarEmImagem  
+from src.util import clicarEmImagem  
+from pywinauto.application import Application
+import json
 
 import time
 import pyautogui
@@ -18,13 +20,18 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     coordenadaTributoMunicipal = informacoes["coordenadaTributoMunicipal"]
     valorNotaFiscal = informacoes["valorNotaFiscal"]
     descricaoServico = informacoes["descricaoServico"]
+    nomeArquivo = informacoes["arquivo"]
 
+    with open('./config/config.json', 'r', encoding='utf-8') as file:
+        config = json.load(file)
+        localNotasFiscais = config['localNotasFiscais']
 
     # Configurando o navegador
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('executable_path=C:\\Users\\guilherme.rabelo\\Documents\\RPA\\chromedriver.exe')
     chrome_options.add_argument('--ignore-certificate-errors')
     chrome_options.add_argument('--ignore-ssl-errors')
+    chrome_options.add_argument('--incognito')
     driver = webdriver.Chrome(options=chrome_options)
     wait = WebDriverWait(driver, 20)
 
@@ -143,9 +150,25 @@ def emitirNf(informacoes, dataAtual, mes, ano):
 
     btnDownload = wait.until(EC.presence_of_element_located((By.ID, 'btnDownloadDANFSE')))
     btnDownload.click()
-    print('Download realizado')
+
+    salvarComo = Application(backend="win32").connect(title=f'Salvar como', timeout=60)
+    time.sleep(3)
+
+    pyautogui.write(nomeArquivo)
+
+    time.sleep(1)
+    salvarComo.SalvarComo.children()[39].click_input()
+    time.sleep(1)
+    pyautogui.write(localNotasFiscais)
+    time.sleep(1)
+    pyautogui.hotkey('ALT', 'L')
+
+    Application(backend="win32").connect(title=f'Confirmar Salvar como', timeout=60)
+    time.sleep(.5)
+    pyautogui.hotkey('ALT', 'S')
 
     time.sleep(3)
     driver.quit()
+    print('Download realizado')
     time.sleep(3)
     return numeroNota
