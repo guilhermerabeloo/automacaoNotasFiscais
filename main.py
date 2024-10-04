@@ -49,4 +49,4 @@ for pj in sensitive_data:
     envioDoEmail(informacoes['email'], nome, numeroNf, informacoes['valorNotaFiscal'], dataAtual, dataPagamento, caminhoNotaFiscal)
 
     time.sleep(5)
-logging.info(f'Fim da automacao')
+logging.info(f'Fim da automacao\n')

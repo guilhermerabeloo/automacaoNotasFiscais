@@ -6,7 +6,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from src.util import clicarEmImagem  
 from pywinauto.application import Application
 import json
-
 import time
 import pyautogui
 
@@ -14,6 +13,7 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     # definicao de variaveis
     loginNfse = informacoes["loginNfse"]
     senhaNFse = informacoes["senhaNFse"]
+    razaoSocialTomador = informacoes["razaoSocial"]
     cnpjTomador = informacoes["cnpjTomador"]
     buscaTributoNacional = informacoes["buscaTributoNacional"]
     buscaTributoMunicipal = informacoes["buscaTributoMunicipal"]
@@ -56,6 +56,9 @@ def emitirNf(informacoes, dataAtual, mes, ano):
 
     btnNovaNf = wait.until(EC.presence_of_element_located((By.ID, 'btnNovaNFSe')))
     numeroNota = int(driver.execute_script("return document.querySelectorAll('.form-group span.form-control-static')[3].innerText")) + 1
+
+    if razaoSocialTomador == 'REGIO LOPES DE OLIVEIRA FILHO 07203962393':
+        numeroNota = numeroNota-1
 
     btnNovaNf.click()
     # Emissao da nota - Etapa 1
