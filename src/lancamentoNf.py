@@ -42,13 +42,11 @@ def lancarNf(infoPj, dataAtual, numeroNf, caminhoNotaFiscal):
     driver.maximize_window()
 
     wait = WebDriverWait(driver, 20)
-    iframeLogin = wait.until(EC.presence_of_element_located((By.ID, 'ifrContent')))
-    driver.switch_to.frame(iframeLogin)
-    time.sleep(5)
-    driver.find_element(by='id', value='login').send_keys(login)
+    wait.until(EC.presence_of_element_located((By.ID, 'mobileTabContent')))
+    time.sleep(2)
+    driver.find_element(by='id', value='username').send_keys(login)
     driver.find_element(by='id', value='password').send_keys(senha)
-    driver.find_element(by='id', value='btnLogin').click()
-    driver.switch_to.default_content()
+    driver.find_element(by='id', value='btnZeevLogin').click()
 
     # personificando pessoa e entrando na tela de lançamento
     elementoShadowDOM = wait.until(EC.presence_of_element_located((By.ID, 'userSearch')))
@@ -83,6 +81,8 @@ def lancarNf(infoPj, dataAtual, numeroNf, caminhoNotaFiscal):
 
     pyautogui.press('TAB')
     time.sleep(.01)
+    pyautogui.press('DOWN')
+    time.sleep(.01)
     pyautogui.press('SPACE')
     time.sleep(.01)
 
@@ -110,7 +110,7 @@ def lancarNf(infoPj, dataAtual, numeroNf, caminhoNotaFiscal):
     time.sleep(2)
 
     pyautogui.write(caminhoNotaFiscal)
-    time.sleep(1)
+    time.sleep(3)
     pyautogui.press('ENTER')
     time.sleep(1)
 

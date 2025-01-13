@@ -154,15 +154,10 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     btnDownload = wait.until(EC.presence_of_element_located((By.ID, 'btnDownloadDANFSE')))
     btnDownload.click()
 
-    salvarComo = Application(backend="win32").connect(title=f'Salvar como', timeout=60)
+    Application(backend="win32").connect(title=f'Salvar como', timeout=60)
     time.sleep(3)
 
-    pyautogui.write(nomeArquivo)
-
-    time.sleep(1)
-    salvarComo.SalvarComo.children()[39].click_input()
-    time.sleep(1)
-    pyautogui.write(localNotasFiscais)
+    pyautogui.write(f'{localNotasFiscais}\\{nomeArquivo}.pdf')
     time.sleep(1)
     pyautogui.hotkey('ALT', 'L')
 
