@@ -59,6 +59,8 @@ def emitirNf(informacoes, dataAtual, mes, ano):
 
     if razaoSocialTomador == 'REGIO LOPES DE OLIVEIRA FILHO 07203962393':
         numeroNota = numeroNota-1
+    elif razaoSocialTomador == '49.050.939 LEVY EMANUEL SANTIAGO PINTO':
+        numeroNota = numeroNota-2
 
     btnNovaNf.click()
     # Emissao da nota - Etapa 1
@@ -89,8 +91,9 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     pyautogui.write('Fortaleza')
     time.sleep(1)
     for _ in range(4):
+        time.sleep(1)
         pyautogui.press('down')
-        time.sleep(.5)
+    time.sleep(1)
     pyautogui.press('enter')
     time.sleep(1)
 
@@ -114,7 +117,7 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     if buscaTributoMunicipal=='print': 
         btnSelecionaCodigo = "C:\\Users\\guilherme.rabelo\\Documents\\RPA_Python\\RPA_LancamentoNotasPJ\\assets\\btn_selectCodigoMunicipio.png"
         clicarEmImagem(btnSelecionaCodigo,0)
-        time.sleep(1)
+        time.sleep(3)
 
         clicarEmImagem(coordenadaTributoMunicipal,0)
     else:
@@ -150,6 +153,7 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     btnEmitir.click()
 
     # Download da nota
+    time.sleep(10)
 
     btnDownload = wait.until(EC.presence_of_element_located((By.ID, 'btnDownloadDANFSE')))
     btnDownload.click()

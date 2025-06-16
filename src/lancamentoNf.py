@@ -20,7 +20,7 @@ def lancarNf(infoPj, dataAtual, numeroNf, caminhoNotaFiscal):
     # definicao de variaveis
     cnpj = infoPj["cnpj"]
     razaoSocial = infoPj["razaoSocial"]
-    valorNotaFiscal = infoPj["valorNotaFiscal"]
+    valorNotaFiscal = infoPj["valorNotaFiscal_zeev"]
     email = infoPj["email"]
     pedido = infoPj["pedido"]
     formaPagamento = infoPj["formaPagamento"]
@@ -35,19 +35,17 @@ def lancarNf(infoPj, dataAtual, numeroNf, caminhoNotaFiscal):
     chrome_options.add_argument('--ignore-certificate-errors')
     chrome_options.add_argument('--ignore-ssl-errors')
     driver = webdriver.Chrome(options=chrome_options)
-    wait = WebDriverWait(driver, 20)
+    wait = WebDriverWait(driver, 60)
 
     # fazendo login
     driver.get('https://fornecedora.zeev.it/my/user-change')
     driver.maximize_window()
 
-    wait = WebDriverWait(driver, 20)
     wait.until(EC.presence_of_element_located((By.ID, 'mobileTabContent')))
     time.sleep(2)
     driver.find_element(by='id', value='username').send_keys(login)
     driver.find_element(by='id', value='password').send_keys(senha)
     driver.find_element(by='id', value='btnZeevLogin').click()
-
     # personificando pessoa e entrando na tela de lançamento
     elementoShadowDOM = wait.until(EC.presence_of_element_located((By.ID, 'userSearch')))
     buscaPessoaPersonificada = driver.execute_script('return arguments[0].shadowRoot.querySelector("#txtSearchUser")', elementoShadowDOM)
@@ -134,8 +132,7 @@ def lancarNf(infoPj, dataAtual, numeroNf, caminhoNotaFiscal):
     form_emissao = driver.find_element(By.ID, 'inpdataDeEmissao')
     form_emissao.send_keys(dataAtual)
 
-    form_valor = driver.find_element(By.ID, 'inpvalorDaNotaFiscal')
-    form_valor.send_keys(float(valorNotaFiscal) / 10)
+    driver.execute_script(f'document.getElementById("inpvalorDaNotaFiscal").value = "{valorNotaFiscal}"')
 
     form_cnpj = driver.find_element(By.ID, 'inppesquisaDeFornecedor')
     form_cnpj.send_keys(cnpj)
@@ -159,8 +156,7 @@ def lancarNf(infoPj, dataAtual, numeroNf, caminhoNotaFiscal):
 
     driver.execute_script(f'document.getElementById("inppedidosOk").value = "ok"')
 
-    form_valorParcela = driver.find_element(By.ID, 'inpvalorDaParcela')
-    form_valorParcela.send_keys(float(valorNotaFiscal) / 10)
+    driver.execute_script(f'document.getElementById("inpvalorDaParcela").value = "{valorNotaFiscal}"')
 
     form_formaPagamento = driver.find_element(By.ID, 'inpformaDePagamento')
     select = Select(form_formaPagamento)
@@ -179,13 +175,22 @@ def lancarNf(infoPj, dataAtual, numeroNf, caminhoNotaFiscal):
     form_formaPagamento = driver.find_element(By.ID, 'inptipoDeConta')
     select = Select(form_formaPagamento)
     select.select_by_value(tipoDeConta)
+    
+    driver.execute_script(f'document.getElementById("inpvalorRateio").value = "{valorNotaFiscal}"')
+    
+    driver.execute_script(f'document.getElementById("inptotalR").value = "{valorNotaFiscal}"')
+    
+    driver.execute_script(f'document.getElementById("inpvalorRateioUnidade").value = "{valorNotaFiscal}"')
+    
+    driver.execute_script(f'document.getElementById("inptotalRUnidade").value = "{valorNotaFiscal}"')
+    
 
     funcao = driver.execute_script('return document.querySelector("#controllers select")')
     if funcao:
         select = Select(funcao)
         select.select_by_index(1)
 
-    time.sleep(10)
+    time.sleep(30)
 
     btnConcluir = driver.find_element(By.ID, 'BtnSend')
     btnConcluir.click()
