@@ -35,7 +35,7 @@ def lancarNf(infoPj, dataAtual, numeroNf, caminhoNotaFiscal):
     chrome_options.add_argument('--ignore-certificate-errors')
     chrome_options.add_argument('--ignore-ssl-errors')
     driver = webdriver.Chrome(options=chrome_options)
-    wait = WebDriverWait(driver, 60)
+    wait = WebDriverWait(driver, 300)
 
     # fazendo login
     driver.get('https://fornecedora.zeev.it/my/user-change')
@@ -108,11 +108,11 @@ def lancarNf(infoPj, dataAtual, numeroNf, caminhoNotaFiscal):
     time.sleep(2)
 
     pyautogui.write(caminhoNotaFiscal)
-    time.sleep(3)
+    time.sleep(7)
     pyautogui.press('ENTER')
-    time.sleep(1)
+    time.sleep(2)
 
-    for _ in range(4):
+    for _ in range(3):
         pyautogui.press('TAB')
         time.sleep(1)
     pyautogui.press('SPACE')
