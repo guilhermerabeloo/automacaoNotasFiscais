@@ -28,6 +28,7 @@ def lancarNf(infoPj, dataAtual, numeroNf, caminhoNotaFiscal):
     agencia = infoPj["agencia"]
     conta = infoPj["conta"]
     tipoDeConta = infoPj["tipoDeConta"]
+    pix = infoPj["pix"]
 
     # Configurando o navegador
     chrome_options = webdriver.ChromeOptions()
@@ -105,8 +106,9 @@ def lancarNf(infoPj, dataAtual, numeroNf, caminhoNotaFiscal):
     pyautogui.press('SPACE')
 
     Application(backend="win32").connect(title="Abrir", found_index=0, timeout=10)
-    time.sleep(2)
+    time.sleep(3)
 
+    print(caminhoNotaFiscal)
     pyautogui.write(caminhoNotaFiscal)
     time.sleep(7)
     pyautogui.press('ENTER')
@@ -116,7 +118,7 @@ def lancarNf(infoPj, dataAtual, numeroNf, caminhoNotaFiscal):
         pyautogui.press('TAB')
         time.sleep(1)
     pyautogui.press('SPACE')
-    time.sleep(1)
+    time.sleep(5)
     pyautogui.press('ENTER')
 
     time.sleep(5)
@@ -162,19 +164,24 @@ def lancarNf(infoPj, dataAtual, numeroNf, caminhoNotaFiscal):
     select = Select(form_formaPagamento)
     select.select_by_value(formaPagamento)
     time.sleep(1)
+    
+    if formaPagamento == "Transferência bancária":
+        form_banco = driver.find_element(By.ID, 'inpinstituicaoBancaria')
+        form_banco.send_keys(banco)
 
-    form_banco = driver.find_element(By.ID, 'inpinstituicaoBancaria')
-    form_banco.send_keys(banco)
+        form_agencia = driver.find_element(By.ID, 'inpagencia')
+        form_agencia.send_keys(agencia)
 
-    form_agencia = driver.find_element(By.ID, 'inpagencia')
-    form_agencia.send_keys(agencia)
+        form_conta = driver.find_element(By.ID, 'inpcontaBancaria')
+        form_conta.send_keys(conta)
 
-    form_conta = driver.find_element(By.ID, 'inpcontaBancaria')
-    form_conta.send_keys(conta)
-
-    form_formaPagamento = driver.find_element(By.ID, 'inptipoDeConta')
-    select = Select(form_formaPagamento)
-    select.select_by_value(tipoDeConta)
+        form_formaPagamento = driver.find_element(By.ID, 'inptipoDeConta')
+        select = Select(form_formaPagamento)
+        select.select_by_value(tipoDeConta)
+    
+    elif formaPagamento == "Pix":
+        form_pix = driver.find_element(By.ID, 'inpchavePix')
+        form_pix.send_keys(pix)
     
     driver.execute_script(f'document.getElementById("inpvalorRateio").value = "{valorNotaFiscal}"')
     

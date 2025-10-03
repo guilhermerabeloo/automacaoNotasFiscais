@@ -57,7 +57,7 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     btnNovaNf = wait.until(EC.presence_of_element_located((By.ID, 'btnNovaNFSe')))
     numeroNota = int(driver.execute_script("return document.querySelectorAll('.form-group span.form-control-static')[3].innerText")) + 1
 
-    if razaoSocialTomador == 'REGIO LOPES DE OLIVEIRA FILHO 07203962393':
+    if razaoSocialTomador == '49.121.142 MARCOS GUILHERME RABELO':
         numeroNota = numeroNota-1
     elif razaoSocialTomador == '49.050.939 LEVY EMANUEL SANTIAGO PINTO':
         numeroNota = numeroNota-2
@@ -79,6 +79,7 @@ def emitirNf(informacoes, dataAtual, mes, ano):
 
     tomador = driver.find_element(by='id', value='Tomador_Inscricao')
     tomador.send_keys(cnpjTomador)
+    
     tomador.send_keys(Keys.TAB)
     time.sleep(1)
     driver.find_element(by='id', value='btnAvancar').click()
@@ -105,19 +106,16 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     pyautogui.press('enter')
     time.sleep(1)
 
-    driver.execute_script("document.getElementById('ServicoPrestado_HaExportacaoImunidadeNaoIncidencia').checked = true")
-    driver.execute_script("document.getElementById('pnlMunIncid').style.display = ''")
-    driver.execute_script("window.scrollBy(0, 500);")
-
-    for _ in range(4):
-        pyautogui.press('TAB')
-        time.sleep(.5)
+    pyautogui.press('TAB')
+    
     time.sleep(1)
 
     if buscaTributoMunicipal=='print': 
-        btnSelecionaCodigo = "C:\\Users\\guilherme.rabelo\\Documents\\RPA_Python\\RPA_LancamentoNotasPJ\\assets\\btn_selectCodigoMunicipio.png"
-        clicarEmImagem(btnSelecionaCodigo,0)
-        time.sleep(3)
+        pyautogui.press('SPACE')
+        time.sleep(1)
+        driver.execute_script("window.scrollBy(0, -500);")
+        
+        time.sleep(1)
 
         clicarEmImagem(coordenadaTributoMunicipal,0)
     else:
@@ -126,10 +124,20 @@ def emitirNf(informacoes, dataAtual, mes, ano):
 
     time.sleep(1)
     pyautogui.press('enter')
+    
+    time.sleep(1)
+    driver.execute_script("document.getElementById('ServicoPrestado_HaExportacaoImunidadeNaoIncidencia').checked = true")
+    time.sleep(1)
+    driver.execute_script("document.getElementById('pnlMunIncid').style.display = ''")
+    time.sleep(1)
+    driver.execute_script("window.scrollBy(0, 500);")
+    time.sleep(1)
+    
 
     time.sleep(5)
     driver.execute_script(f"document.getElementById('ServicoPrestado_Descricao').value = '{descricaoServico} {mes}/{ano}'")
     time.sleep(1)
+    
     driver.find_element(by='css selector', value='button.btn-primary').click()
 
     time.sleep(1)
