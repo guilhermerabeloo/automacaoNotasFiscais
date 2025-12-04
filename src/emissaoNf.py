@@ -50,19 +50,24 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     time.sleep(1)
 
     ## Obtendo numero da ultima nota
-    driver.execute_script("""const quantidadeTabelas = document.querySelectorAll('table.table-striped').length
-                             document.querySelectorAll('table.table-striped')[quantidadeTabelas-1].querySelector('tbody tr .td-opcoes a').click()
-                        """)
+    try: # PJ com mais de uma nota emitida
+        driver.execute_script("""const quantidadeTabelas = document.querySelectorAll('table.table-striped').length
+                                document.querySelectorAll('table.table-striped')[quantidadeTabelas-1].querySelector('tbody tr .td-opcoes a').click()
+                            """)
 
-    btnNovaNf = wait.until(EC.presence_of_element_located((By.ID, 'btnNovaNFSe')))
-    numeroNota = int(driver.execute_script("return document.querySelectorAll('.form-group span.form-control-static')[3].innerText")) + 1
+        btnNovaNf = wait.until(EC.presence_of_element_located((By.ID, 'btnNovaNFSe')))
+        numeroNota = int(driver.execute_script("return document.querySelectorAll('.form-group span.form-control-static')[3].innerText")) + 1
 
-    if razaoSocialTomador == '49.121.142 MARCOS GUILHERME RABELO':
-        numeroNota = numeroNota-1
-    elif razaoSocialTomador == '49.050.939 LEVY EMANUEL SANTIAGO PINTO':
-        numeroNota = numeroNota-2
+        if razaoSocialTomador == '49.121.142 MARCOS GUILHERME RABELO':
+            numeroNota = numeroNota-1
+        elif razaoSocialTomador == '49.050.939 LEVY EMANUEL SANTIAGO PINTO':
+            numeroNota = numeroNota-2
 
-    btnNovaNf.click()
+        btnNovaNf.click()
+    except: # PJ com primeira nota emitida
+        numeroNota = 0
+        driver.execute_script("document.querySelector('a.btnAcesso').click()")
+        
     # Emissao da nota - Etapa 1
     print('etapa 1 - Informações do tomador')
 
@@ -72,8 +77,11 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     time.sleep(1)
     wait.until(EC.presence_of_element_located((By.ID, 'btnAvancar')))
 
+    time.sleep(1)
     driver.execute_script("document.querySelectorAll('#Tomador_LocalDomicilio')[1].checked = true")
+    time.sleep(1)
     driver.execute_script("document.getElementsByClassName('retratil')[1].style.display = ''")
+    time.sleep(1)
     driver.execute_script("document.getElementById('pnlInscricaoBrasil').style.display = ''")
     time.sleep(1)
 
@@ -83,7 +91,7 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     tomador.send_keys(Keys.TAB)
     time.sleep(1)
     driver.find_element(by='id', value='btnAvancar').click()
-    time.sleep(3)
+    time.sleep(5)
 
     # Emissao da nota - Etapa 2
     print('etapa 2 - Informações do serviço')
@@ -120,9 +128,10 @@ def emitirNf(informacoes, dataAtual, mes, ano):
         clicarEmImagem(coordenadaTributoMunicipal,0)
     else:
         pyautogui.press('enter')
+        time.sleep(2)
         pyautogui.write(buscaTributoMunicipal)
 
-    time.sleep(1)
+    time.sleep(2)
     pyautogui.press('enter')
     
     time.sleep(1)
