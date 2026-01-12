@@ -13,7 +13,6 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     # definicao de variaveis
     loginNfse = informacoes["loginNfse"]
     senhaNFse = informacoes["senhaNFse"]
-    razaoSocialTomador = informacoes["razaoSocial"]
     cnpjTomador = informacoes["cnpjTomador"]
     buscaTributoNacional = informacoes["buscaTributoNacional"]
     buscaTributoMunicipal = informacoes["buscaTributoMunicipal"]
@@ -47,29 +46,12 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     senha = wait.until(EC.presence_of_element_located((By.ID, 'Senha')))
     senha.send_keys(senhaNFse)
     driver.find_element(by='css selector', value='button.btn-primary').click()
-    time.sleep(1)
-
-    ## Obtendo numero da ultima nota
-    try: # PJ com mais de uma nota emitida
-        driver.execute_script("""const quantidadeTabelas = document.querySelectorAll('table.table-striped').length
-                                document.querySelectorAll('table.table-striped')[quantidadeTabelas-1].querySelector('tbody tr .td-opcoes a').click()
-                            """)
-
-        btnNovaNf = wait.until(EC.presence_of_element_located((By.ID, 'btnNovaNFSe')))
-        numeroNota = int(driver.execute_script("return document.querySelectorAll('.form-group span.form-control-static')[3].innerText")) + 1
-
-        if razaoSocialTomador == '49.121.142 MARCOS GUILHERME RABELO':
-            numeroNota = numeroNota-1
-        elif razaoSocialTomador == '49.050.939 LEVY EMANUEL SANTIAGO PINTO':
-            numeroNota = numeroNota-2
-
-        btnNovaNf.click()
-    except: # PJ com primeira nota emitida
-        numeroNota = 0
-        driver.execute_script("document.querySelector('a.btnAcesso').click()")
-        
-    # Emissao da nota - Etapa 1
+    time.sleep(5)
+    
     print('etapa 1 - Informações do tomador')
+
+    driver.execute_script("document.querySelector('#wgtAcessoRapido .btnAcesso').click()")
+    time.sleep(1)
 
     competencia = wait.until(EC.presence_of_element_located((By.ID, 'DataCompetencia')))
     competencia.send_keys(dataAtual)
@@ -177,9 +159,11 @@ def emitirNf(informacoes, dataAtual, mes, ano):
 
     Application(backend="win32").connect(title=f'Salvar como', timeout=60)
     time.sleep(3)
+    
+    caminhoSalvamento = f'{localNotasFiscais}\\{nomeArquivo}.pdf'
 
-    pyautogui.write(f'{localNotasFiscais}\\{nomeArquivo}.pdf')
-    time.sleep(1)
+    pyautogui.write(caminhoSalvamento)
+    time.sleep(5)
     pyautogui.hotkey('ALT', 'L')
 
     Application(backend="win32").connect(title=f'Confirmar Salvar como', timeout=60)
@@ -190,4 +174,3 @@ def emitirNf(informacoes, dataAtual, mes, ano):
     driver.quit()
     print('Download realizado')
     time.sleep(3)
-    return numeroNota

@@ -1,6 +1,8 @@
 from src.lancamentoNf import lancarNf
 from src.emissaoNf import emitirNf
 from src.sendEmail import envioDoEmail
+from src.util import extrai_texto_de_pdf
+from src.util import extrai_numero_nf
 import json
 import datetime
 import time
@@ -38,9 +40,17 @@ for pj in sensitive_data:
     nomeArquivo = informacoes["arquivo"]
     caminhoNotaFiscal = f'{localNotasFiscais}\\{nomeArquivo}.pdf'
 
+
     logging.info(f'Iniciando emissao da nota de {nome}')
-    numeroNf = emitirNf(informacoes, dataAtual, mes, ano)
+    emitirNf(informacoes, dataAtual, mes, ano)
     logging.info(f'Finalizando emissao da nota de {nome}')
+    
+        
+    logging.info(f'Iniciando extracao do numero da nota fiscal de {nome}')
+    textosExtraidos = extrai_texto_de_pdf(caminhoNotaFiscal)
+    numeroNf = extrai_numero_nf(textosExtraidos)
+    logging.info(f'Finalizando extracao do numero da nota fiscal  {nome}')
+    
 
     logging.info(f'Iniciando lancamento de {nome}')
     lancarNf(informacoes, dataAtual, numeroNf, caminhoNotaFiscal)
